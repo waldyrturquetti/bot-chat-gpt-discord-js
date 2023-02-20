@@ -36,6 +36,7 @@ client.login(TOKEN);
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
+
   const command = interaction.client.commands.get(interaction.commandName);
 
   if (!command) {
@@ -44,6 +45,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 
   try {
+    // await interaction.deferReply();
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
