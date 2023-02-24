@@ -12,31 +12,28 @@ const openai = new OpenAIApi(configuration);
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("chat")
-    .setDescription("Post your question and receive the answer.")
+    .setName("image")
+    .setDescription(
+      "Post your image description and receive the image created by OpenAI."
+    )
     .addStringOption((option) =>
       option
-        .setName("message")
+        .setName("description")
         .setDescription("The message for the AI.")
         .setRequired(true)
     ),
   async execute(interaction) {
     try {
-      const message = interaction.options.getString("message");
+      const imageDescription = interaction.options.getString("description");
       await interaction.deferReply({ ephemeral: true });
 
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: message,
-        temperature: 0.9,
-        max_tokens: 1000,
-        top_p: 1,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
-        stop: [" Human:", " AI:"],
+      const response = await openai.createImage({
+        prompt: imageDescription,
+        n: 1,
+        size: "1024x1024",
       });
 
-      await interaction.editReply(response.data.choices[0].text);
+      await interaction.editReply(response.data.data[0].url);
     } catch (error) {
       console.error(error);
       await interaction.editReply("something went wrong!");
